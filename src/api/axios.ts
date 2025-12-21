@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export const api = axios.create({
@@ -10,6 +10,8 @@ export const api = axios.create({
         "x-client-key": API_KEY, // 백엔드 미들웨어 통과용 키
     },
 });
+
+console.log(BASE_URL)
 
 // 요청 인터셉터: 로컬 스토리지에 토큰이 있다면 헤더에 자동 추가
 api.interceptors.request.use(config => {

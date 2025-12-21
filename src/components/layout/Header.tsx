@@ -36,7 +36,7 @@ function Header() {
             {/* 3. 오른쪽: 로그인 버튼 */}
             <div className="flex items-center gap-2">
                 <Link
-                    to="/login"
+                    to="/sign-in"
                     className="flex items-center gap-2 p-2 px-4 border border-divider rounded-full text-secondary-main font-medium hover:bg-secondary-main/10 transition-colors"
                 >
                     <FaRegUserCircle className="w-5 h-5" />
