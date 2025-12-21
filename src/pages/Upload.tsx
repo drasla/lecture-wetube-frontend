@@ -42,6 +42,7 @@ function Upload() {
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
     // 비디오 파일 선택 시 미리보기 생성
+    // URL.createObjectURL : 사용자가 선택한 파일을 브라우저 메모리에 임시 URL로 만들어서, 즉시 미리보기 가능하게 처리
     useEffect(() => {
         if (videoFile && videoFile.length > 0) {
             const file = videoFile[0];
