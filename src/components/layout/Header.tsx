@@ -1,8 +1,13 @@
 import { Link } from "react-router";
-import { MdMenu, MdSearch } from "react-icons/md";
+import { MdMenu, MdNotifications, MdSearch, MdVideoCall } from "react-icons/md";
 import { FaRegUserCircle, FaYoutube } from "react-icons/fa";
+import { useAuthStore } from "../../store/authStore.ts";
 
 function Header() {
+    const user = useAuthStore((state) => state.user);
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+    const logout = useAuthStore((state) => state.logout);
+
     return (
         <header className="fixed top-0 left-0 right-0 h-14 bg-background-paper border-b border-divider flex items-center justify-between px-4 z-50 transition-colors duration-200">
             {/* 1. 왼쪽: 메뉴 및 로고 */}
@@ -34,14 +39,41 @@ function Header() {
             </div>
 
             {/* 3. 오른쪽: 로그인 버튼 */}
+            {/* 3. 오른쪽: 로그인 상태에 따라 분기 처리 */}
             <div className="flex items-center gap-2">
-                <Link
-                    to="/sign-in"
-                    className="flex items-center gap-2 p-2 px-4 border border-divider rounded-full text-secondary-main font-medium hover:bg-secondary-main/10 transition-colors"
-                >
-                    <FaRegUserCircle className="w-5 h-5" />
-                    <span className="text-sm">로그인</span>
-                </Link>
+                {isLoggedIn && user ? (
+                    /* ✨ 로그인 했을 때 보여줄 UI */
+                    <>
+                        <button className="p-2 hover:bg-text-default/10 rounded-full text-text-default" title="만들기">
+                            <MdVideoCall className="w-7 h-7" />
+                        </button>
+                        <button className="p-2 hover:bg-text-default/10 rounded-full text-text-default" title="알림">
+                            <MdNotifications className="w-6 h-6" />
+                        </button>
+
+                        {/* 프로필 아바타 (클릭 시 로그아웃 임시 구현) */}
+                        <button
+                            onClick={logout}
+                            className="ml-2 w-8 h-8 rounded-full bg-primary-main text-white flex items-center justify-center text-sm font-bold hover:opacity-90 overflow-hidden"
+                            title="로그아웃"
+                        >
+                            {user.profileImage ? (
+                                <img src={`http://127.0.0.1:4000${user.profileImage}`} alt="profile" className="w-full h-full object-cover" />
+                            ) : (
+                                user.nickname[0].toUpperCase()
+                            )}
+                        </button>
+                    </>
+                ) : (
+                    /* ☁️ 로그인 안 했을 때 (기존) */
+                    <Link
+                        to="/sign-in" // 경로 수정 반영
+                        className="flex items-center gap-2 p-2 px-4 border border-divider rounded-full text-secondary-main font-medium hover:bg-secondary-main/10 transition-colors"
+                    >
+                        <FaRegUserCircle className="w-5 h-5" />
+                        <span className="text-sm">로그인</span>
+                    </Link>
+                )}
             </div>
         </header>
     );

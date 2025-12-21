@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import { FaYoutube } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 import type { AxiosError } from "axios";
+import { useAuthStore } from "../store/authStore.ts";
 
 interface LoginFormData {
     username: string;
@@ -13,6 +14,7 @@ interface LoginFormData {
 
 function SignIn() {
     const navigate = useNavigate();
+    const login = useAuthStore((state) => state.login);
 
     const {
         register,
@@ -31,9 +33,7 @@ function SignIn() {
             // 2. 응답 데이터 추출 (토큰, 유저정보)
             const { token, user } = response.data;
 
-            // 3. 토큰을 로컬 스토리지에 저장 (중요 ⭐)
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user)); // 유저 정보도 일단 저장
+            login(token, user);
 
             alert(`${user.nickname}님 환영합니다!`);
             navigate("/"); // 홈으로 이동
