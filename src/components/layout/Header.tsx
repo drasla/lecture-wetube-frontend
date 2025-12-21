@@ -66,9 +66,13 @@ function Header() {
                 {isLoggedIn && user ? (
                     /* ✨ 로그인 했을 때 보여줄 UI */
                     <>
-                        <button className="p-2 hover:bg-text-default/10 rounded-full text-text-default" title="만들기">
+                        <Link
+                            to="/upload"
+                            className="p-2 hover:bg-text-default/10 rounded-full text-text-default inline-flex items-center justify-center"
+                            title="만들기"
+                        >
                             <MdVideoCall className="w-7 h-7" />
-                        </button>
+                        </Link>
                         <button className="p-2 hover:bg-text-default/10 rounded-full text-text-default" title="알림">
                             <MdNotifications className="w-6 h-6" />
                         </button>
