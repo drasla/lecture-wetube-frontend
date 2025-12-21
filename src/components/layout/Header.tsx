@@ -1,12 +1,23 @@
 import { Link } from "react-router";
-import { MdMenu, MdNotifications, MdSearch, MdVideoCall } from "react-icons/md";
+import {
+    MdDarkMode,
+    MdLightMode,
+    MdMenu,
+    MdNotifications,
+    MdSearch,
+    MdVideoCall,
+} from "react-icons/md";
 import { FaRegUserCircle, FaYoutube } from "react-icons/fa";
 import { useAuthStore } from "../../store/authStore.ts";
+import { useThemeStore } from "../../store/themeStore.ts";
 
 function Header() {
     const user = useAuthStore((state) => state.user);
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
     const logout = useAuthStore((state) => state.logout);
+
+    const theme = useThemeStore((state) => state.theme);
+    const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
     return (
         <header className="fixed top-0 left-0 right-0 h-14 bg-background-paper border-b border-divider flex items-center justify-between px-4 z-50 transition-colors duration-200">
@@ -41,6 +52,17 @@ function Header() {
             {/* 3. 오른쪽: 로그인 버튼 */}
             {/* 3. 오른쪽: 로그인 상태에 따라 분기 처리 */}
             <div className="flex items-center gap-2">
+                <button
+                    onClick={toggleTheme}
+                    className="p-2 hover:bg-text-default/10 rounded-full text-text-default transition-colors"
+                    title={theme === 'dark' ? "라이트 모드로 변경" : "다크 모드로 변경"}
+                >
+                    {theme === 'dark' ? (
+                        <MdLightMode className="w-6 h-6" />
+                    ) : (
+                        <MdDarkMode className="w-6 h-6" />
+                    )}
+                </button>
                 {isLoggedIn && user ? (
                     /* ✨ 로그인 했을 때 보여줄 UI */
                     <>
