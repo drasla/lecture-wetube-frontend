@@ -7,7 +7,13 @@ interface User {
     nickname: string;
     email: string;
     profileImage?: string | null;
+    phoneNumber?: string;
+    birthDate?: string;
+    zipCode?: string;
+    address1?: string;
+    address2?: string;
     role: "USER" | "ADMIN";
+    gender: "MALE" | "FEMALE";
 }
 
 interface AuthState {

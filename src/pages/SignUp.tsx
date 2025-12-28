@@ -26,6 +26,10 @@ function SignUp() {
     const [isUsernameChecked, setIsUsernameChecked] = useState(false);
     const [usernameMessage, setUsernameMessage] = useState("");
 
+    // 2. ✨ 닉네임 중복 확인 State 추가
+    const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+    const [nicknameMessage, setNicknameMessage] = useState("");
+
     const {
         register,
         handleSubmit,
@@ -62,9 +66,40 @@ function SignUp() {
         }
     };
 
+    // ✨ 닉네임 중복 확인
+    const handleCheckNickname = async () => {
+        const nickname = getValues("nickname");
+        if (!nickname) {
+            setError("nickname", { message: "닉네임을 입력해주세요." });
+            return;
+        }
+
+        try {
+            // 백엔드에 새로 만든 API 호출
+            const response = await api.post("/auth/check-nickname", { nickname });
+            const { isAvailable, message } = response.data;
+
+            if (isAvailable) {
+                setIsNicknameChecked(true);
+                setNicknameMessage(message);
+                clearErrors("nickname");
+            } else {
+                setIsNicknameChecked(false);
+                setError("nickname", { message });
+            }
+        } catch (error) {
+            console.error(error);
+            setError("nickname", { message: "중복 확인 중 오류가 발생했습니다." });
+        }
+    };
+
     const onSubmit = async (data: SignupFormData) => {
         if (!isUsernameChecked) {
             alert("아이디 중복 확인을 해주세요.");
+            return;
+        }
+        if (!isNicknameChecked) {
+            alert("닉네임 중복 확인을 해주세요.");
             return;
         }
 
@@ -115,13 +150,13 @@ function SignUp() {
                                     },
                                 })}
                             />
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    className={twMerge("text-sm", "w-24", "mt-6")}
-                                    onClick={handleCheckUsername}>
-                                    중복확인
-                                </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className={twMerge("text-sm", "w-24", "mt-6")}
+                                onClick={handleCheckUsername}>
+                                중복확인
+                            </Button>
                         </div>
                         {isUsernameChecked && (
                             <p className="text-success-main text-xs mt-[-10px]">
@@ -154,14 +189,34 @@ function SignUp() {
                             })}
                         />
 
-                        <Input
-                            label="닉네임"
-                            placeholder="활동명"
-                            error={errors.nickname?.message}
-                            registration={register("nickname", {
-                                required: "닉네임은 필수입니다.",
-                            })}
-                        />
+                        {/* ✨ 닉네임 입력 & 중복확인 */}
+                        <div className="flex items-start gap-2">
+                            <Input
+                                label="닉네임"
+                                placeholder="활동명"
+                                error={errors.nickname?.message}
+                                registration={register("nickname", {
+                                    required: "닉네임은 필수입니다.",
+                                    onChange: () => {
+                                        // 입력값이 바뀌면 다시 체크
+                                        setIsNicknameChecked(false);
+                                        setNicknameMessage("");
+                                    },
+                                })}
+                            />
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className={twMerge("text-sm", "w-24", "mt-6")}
+                                onClick={handleCheckNickname}>
+                                중복확인
+                            </Button>
+                        </div>
+                        {isNicknameChecked && (
+                            <p className="text-success-main text-xs mt-[-10px]">
+                                {nicknameMessage}
+                            </p>
+                        )}
                     </div>
 
                     {/* 2. 개인 정보 */}
