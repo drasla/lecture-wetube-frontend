@@ -2,7 +2,15 @@ import type { ButtonHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary" | "outline" | "ghost";
+    variant?:
+        | "primary"
+        | "secondary"
+        | "outline"
+        | "ghost"
+        | "success"
+        | "error"
+        | "warning"
+        | "info";
     size?: "sm" | "md" | "lg";
 }
 
@@ -27,6 +35,26 @@ function Button({ className, variant = "primary", size = "md", ...props }: Butto
                     "border-divider",
                     "text-text-default",
                     "hover:bg-text-default/10",
+                ],
+                variant === "success" && [
+                    "bg-success-main",
+                    "text-success-contrastText",
+                    "hover:bg-success-dark",
+                ],
+                variant === "error" && [
+                    "bg-error-main",
+                    "text-error-contrastText",
+                    "hover:bg-error-dark",
+                ],
+                variant === "warning" && [
+                    "bg-warning-main",
+                    "text-warning-contrastText",
+                    "hover:bg-warning-dark",
+                ],
+                variant === "info" && [
+                    "bg-info-main",
+                    "text-info-contrastText",
+                    "hover:bg-info-dark",
                 ],
                 variant === "outline" && [
                     "border",

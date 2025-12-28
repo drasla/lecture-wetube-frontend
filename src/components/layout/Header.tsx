@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import {
     MdAccountBox,
+    MdCampaign,
     MdDarkMode,
     MdEdit,
     MdLightMode,
@@ -76,6 +77,13 @@ function Header() {
                 {/* 3. 오른쪽: 로그인 버튼 */}
                 {/* 3. 오른쪽: 로그인 상태에 따라 분기 처리 */}
                 <div className="flex items-center gap-2">
+                    {/* ✨ 공지사항 버튼 (로그인 여부 상관없이 노출) */}
+                    <Link
+                        to="/notices"
+                        className="p-2 hover:bg-text-default/10 rounded-full text-text-default inline-flex items-center justify-center"
+                        title="공지사항">
+                        <MdCampaign className="w-6 h-6" />
+                    </Link>
                     <button
                         onClick={toggleTheme}
                         className="p-2 hover:bg-text-default/10 rounded-full text-text-default transition-colors"
