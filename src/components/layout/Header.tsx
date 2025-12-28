@@ -13,18 +13,19 @@ import {
 import { FaRegUserCircle, FaYoutube } from "react-icons/fa";
 import { useAuthStore } from "../../store/authStore.ts";
 import { useThemeStore } from "../../store/themeStore.ts";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import Backdrop from "../ui/Backdrop.tsx";
+import { useModalStore } from "../../store/ModalStore.ts";
 
 function Header() {
     const navigate = useNavigate();
 
-    const user = useAuthStore(state => state.user);
-    const isLoggedIn = useAuthStore(state => state.isLoggedIn);
-    const logout = useAuthStore(state => state.logout);
+    const { user, isLoggedIn, logout } = useAuthStore();
 
     const theme = useThemeStore(state => state.theme);
     const toggleTheme = useThemeStore(state => state.toggleTheme);
+
+    const { openModal } = useModalStore();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -32,6 +33,13 @@ function Header() {
         logout();
         setIsMenuOpen(false);
         navigate("/");
+    };
+
+    const handleUploadClick = (e: MouseEvent) => {
+        if (!isLoggedIn) {
+            e.preventDefault(); // 링크 이동 막기
+            openModal("LOGIN_REQUIRED"); // ✨ 전역 모달 열기!
+        }
     };
 
     return (
@@ -78,15 +86,16 @@ function Header() {
                             <MdDarkMode className="w-6 h-6" />
                         )}
                     </button>
+                    <Link
+                        onClick={handleUploadClick}
+                        to="/upload"
+                        className="p-2 hover:bg-text-default/10 rounded-full text-text-default inline-flex items-center justify-center"
+                        title="만들기">
+                        <MdVideoCall className="w-7 h-7" />
+                    </Link>
                     {isLoggedIn && user ? (
                         /* ✨ 로그인 했을 때 보여줄 UI */
                         <>
-                            <Link
-                                to="/upload"
-                                className="p-2 hover:bg-text-default/10 rounded-full text-text-default inline-flex items-center justify-center"
-                                title="만들기">
-                                <MdVideoCall className="w-7 h-7" />
-                            </Link>
                             <button
                                 className="p-2 hover:bg-text-default/10 rounded-full text-text-default"
                                 title="알림">
