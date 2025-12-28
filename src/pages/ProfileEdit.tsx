@@ -6,6 +6,8 @@ import { useAuthStore } from "../store/authStore";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { MdCameraAlt } from "react-icons/md";
+import { useModalStore } from "../store/ModalStore.ts";
+import { twMerge } from "tailwind-merge";
 
 // ✨ 성별, 생년월일 필드 추가
 interface ProfileEditFormData {
@@ -22,6 +24,12 @@ interface ProfileEditFormData {
 export default function ProfileEdit() {
     const navigate = useNavigate();
     const { user, updateUser } = useAuthStore();
+    const { openModal } = useModalStore(); // ✨
+
+    // ✨ 닉네임 중복 확인 상태 관리
+    // 초기값은 true (내 원래 닉네임은 유효함)
+    const [isNicknameChecked, setIsNicknameChecked] = useState(true);
+    const [nicknameMessage, setNicknameMessage] = useState("");
 
     // 로그인 체크
     useEffect(() => {
@@ -35,6 +43,10 @@ export default function ProfileEdit() {
         register,
         handleSubmit,
         watch,
+        setValue,
+        setError,
+        getValues,
+        clearErrors,
         formState: { errors, isSubmitting },
     } = useForm<ProfileEditFormData>({
         // 기존 유저 정보로 초기값 설정
@@ -48,6 +60,42 @@ export default function ProfileEdit() {
             gender: (user?.gender as "MALE" | "FEMALE") || "MALE", // ✨ 추가 (기본값 MALE)
         },
     });
+
+    // ✨ 닉네임 중복 확인 핸들러
+    const handleCheckNickname = async () => {
+        const nickname = getValues("nickname");
+
+        if (!nickname) {
+            setError("nickname", { message: "닉네임을 입력해주세요." });
+            return;
+        }
+
+        // 1. 내 원래 닉네임과 같다면 API 호출 없이 통과
+        if (user?.nickname === nickname) {
+            setIsNicknameChecked(true);
+            setNicknameMessage("현재 사용 중인 닉네임입니다.");
+            clearErrors("nickname");
+            return;
+        }
+
+        // 2. 다른 닉네임이라면 API 호출
+        try {
+            const response = await api.post("/auth/check-nickname", { nickname });
+            const { isAvailable, message } = response.data;
+
+            if (isAvailable) {
+                setIsNicknameChecked(true);
+                setNicknameMessage(message);
+                clearErrors("nickname");
+            } else {
+                setIsNicknameChecked(false);
+                setError("nickname", { message });
+            }
+        } catch (error) {
+            console.error(error);
+            setError("nickname", { message: "중복 확인 중 오류가 발생했습니다." });
+        }
+    };
 
     // 이미지 미리보기 로직
     const profileImageFileList = watch("profileImage");
@@ -70,7 +118,23 @@ export default function ProfileEdit() {
         }
     }, [profileImageFileList]);
 
+    // ✨ 주소 찾기 핸들러 (회원가입과 동일 로직)
+    const handleAddressSearch = () => {
+        openModal("ADDRESS_SEARCH", {
+            onComplete: (data: { zonecode: string; address: string }) => {
+                setValue("zipCode", data.zonecode);
+                setValue("address1", data.address);
+            },
+        });
+    };
+
     const onSubmit = async (data: ProfileEditFormData) => {
+        // ✨ 제출 전 닉네임 체크 확인
+        if (!isNicknameChecked) {
+            alert("닉네임 중복 확인을 해주세요.");
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append("nickname", data.nickname);
@@ -86,7 +150,7 @@ export default function ProfileEdit() {
             }
 
             // API 요청
-            const response = await api.patch("/profile", formData, {
+            const response = await api.patch("/auth/profile", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
@@ -105,7 +169,7 @@ export default function ProfileEdit() {
             const msg = error.response?.data?.message || "프로필 수정 실패";
             alert(msg);
         }
-    };
+    };;
 
     if (!user) return null;
 
@@ -149,12 +213,45 @@ export default function ProfileEdit() {
                     </div>
 
                     {/* 2. 기본 정보 */}
-                    <Input
-                        label="닉네임"
-                        placeholder="닉네임을 입력하세요"
-                        error={errors.nickname?.message}
-                        registration={register("nickname", { required: "닉네임은 필수입니다." })}
-                    />
+                    <div>
+                        <div className="flex items-start gap-2">
+                            <Input
+                                label="닉네임"
+                                placeholder="닉네임을 입력하세요"
+                                error={errors.nickname?.message}
+                                registration={register("nickname", {
+                                    required: "닉네임은 필수입니다.",
+                                    onChange: () => {
+                                        // 닉네임을 변경하려고 시도하면 체크 상태 해제
+                                        // 단, 사용자가 다시 원래 닉네임으로 되돌리는 경우도 있어서
+                                        // 엄밀히는 원래 닉네임과 다를 때만 false로 해도 되지만,
+                                        // UX상 "수정했으면 확인 버튼을 눌러라"가 더 명확할 수 있습니다.
+                                        const currentVal = getValues("nickname");
+                                        if (currentVal !== user.nickname) {
+                                            setIsNicknameChecked(false);
+                                            setNicknameMessage("");
+                                        } else {
+                                            // 다시 원래대로 돌아오면 true로 (선택 사항)
+                                            setIsNicknameChecked(true);
+                                            setNicknameMessage("");
+                                            clearErrors("nickname");
+                                        }
+                                    },
+                                })}
+                            />
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className={twMerge("text-sm", "w-24", "mt-[26px]")} // 라벨 높이 고려해서 마진 조정
+                                onClick={handleCheckNickname}>
+                                중복확인
+                            </Button>
+                        </div>
+                        {/* 성공 메시지 표시 */}
+                        {isNicknameChecked && nicknameMessage && (
+                            <p className="text-success-main text-xs mt-1 ml-1">{nicknameMessage}</p>
+                        )}
+                    </div>
 
                     {/* ✨ 생년월일 입력 추가 */}
                     <div className="flex flex-col gap-1">
@@ -204,16 +301,21 @@ export default function ProfileEdit() {
                             <input
                                 type="text"
                                 placeholder="우편번호"
-                                className="w-1/3 rounded-md border border-divider bg-background-default px-3 py-2 text-sm text-text-default outline-none focus:border-secondary-main"
+                                className="flex-1 rounded-md border border-divider bg-background-default px-3 py-2 text-sm text-text-default outline-none focus:border-secondary-main"
                                 {...register("zipCode")}
                             />
-                            <Button type="button" variant="ghost" className="text-sm px-3">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className="text-sm px-3 w-30"
+                                onClick={handleAddressSearch}>
                                 주소 찾기
                             </Button>
                         </div>
                         <input
                             type="text"
                             placeholder="기본 주소"
+                            readOnly
                             className="w-full rounded-md border border-divider bg-background-default px-3 py-2 text-sm text-text-default outline-none focus:border-secondary-main"
                             {...register("address1")}
                         />
@@ -240,7 +342,7 @@ export default function ProfileEdit() {
                     <div className="flex gap-3 pt-4">
                         <Button
                             type="button"
-                            variant="ghost" // 'outline' -> 'ghost' (Button 컴포넌트 스타일에 맞게)
+                            variant="secondary"
                             className="flex-1"
                             onClick={() => navigate(-1)}>
                             취소

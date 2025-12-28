@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ModalType = "LOGIN_REQUIRED" | "VIDEO_DETAIL" | null;
+type ModalType = "LOGIN_REQUIRED" | "VIDEO_DETAIL" | "ADDRESS_SEARCH" | null;
 
 interface ModalState {
     isOpen: boolean;

@@ -1,6 +1,7 @@
 import { useModalStore } from "../../store/ModalStore.ts";
 import Backdrop from "./Backdrop.tsx";
 import { MdClose } from "react-icons/md";
+import DaumPostcodeEmbed from "react-daum-postcode";
 
 export default function GlobalModal() {
     const { isOpen, type, props, closeModal } = useModalStore();
@@ -23,7 +24,14 @@ export default function GlobalModal() {
 
                 {/* 타입에 따른 컨텐츠 렌더링 */}
                 {type === "LOGIN_REQUIRED" && <LoginRequiredModal onClose={closeModal} />}
-                {/* {type === 'VIDEO_DETAIL' && <VideoDetailModal videoId={props.videoId} />} */}
+
+                {/* 주소 찾기 모달 연결 */}
+                {type === "ADDRESS_SEARCH" && (
+                    <AddressSearchModal
+                        onClose={closeModal}
+                        onComplete={props?.onComplete} // SignUp 페이지에서 넘겨준 콜백
+                    />
+                )}
             </div>
         </div>
     );
@@ -47,3 +55,47 @@ const LoginRequiredModal = ({ onClose }: { onClose: VoidFunction }) => (
         </div>
     </div>
 );
+
+// 2. ✨ 주소 검색 모달 컴포넌트 추가
+const AddressSearchModal = ({
+    onClose,
+    onComplete,
+}: {
+    onClose: () => void;
+    onComplete: (data: any) => void;
+}) => {
+    const handleComplete = (data: any) => {
+        let fullAddress = data.address;
+        let extraAddress = "";
+
+        if (data.addressType === "R") {
+            if (data.bname !== "") {
+                extraAddress += data.bname;
+            }
+            if (data.buildingName !== "") {
+                extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+            }
+            fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+        }
+
+        // 선택된 데이터(우편번호, 주소)를 부모에게 전달
+        onComplete({
+            zonecode: data.zonecode,
+            address: fullAddress,
+        });
+
+        onClose(); // 선택 후 모달 닫기
+    };
+
+    return (
+        <div className="bg-background-paper p-4 rounded-lg shadow-xl w-full max-w-[500px] border border-divider">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-text-default">주소 검색</h2>
+            </div>
+            {/* 다음 우편번호 라이브러리 임베드 */}
+            <div className="h-[400px] border border-divider">
+                <DaumPostcodeEmbed onComplete={handleComplete} style={{ height: "100%" }} />
+            </div>
+        </div>
+    );
+};

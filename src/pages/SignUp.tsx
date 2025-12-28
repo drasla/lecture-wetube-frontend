@@ -7,6 +7,7 @@ import Input from "../components/ui/Input.tsx";
 import Button from "../components/ui/Button.tsx";
 import { twMerge } from "tailwind-merge";
 import type { AxiosError } from "axios";
+import { useModalStore } from "../store/ModalStore.ts";
 
 interface SignupFormData {
     username: string;
@@ -23,6 +24,8 @@ interface SignupFormData {
 
 function SignUp() {
     const navigate = useNavigate();
+    const { openModal } = useModalStore(); // ✨ 훅 사용
+
     const [isUsernameChecked, setIsUsernameChecked] = useState(false);
     const [usernameMessage, setUsernameMessage] = useState("");
 
@@ -35,6 +38,7 @@ function SignUp() {
         handleSubmit,
         getValues,
         setError,
+        setValue,
         clearErrors,
         formState: { errors, isSubmitting },
     } = useForm<SignupFormData>({
@@ -91,6 +95,21 @@ function SignUp() {
             console.error(error);
             setError("nickname", { message: "중복 확인 중 오류가 발생했습니다." });
         }
+    };
+
+    // ✨ 주소 찾기 버튼 핸들러
+    const handleAddressSearch = () => {
+        openModal("ADDRESS_SEARCH", {
+            onComplete: (data: { zonecode: string; address: string }) => {
+                // 모달에서 주소를 선택하고 나면 이 함수가 실행됩니다.
+                // react-hook-form의 setValue로 값을 넣어줍니다.
+                setValue("zipCode", data.zonecode, { shouldValidate: true });
+                setValue("address1", data.address, { shouldValidate: true });
+
+                // 상세주소로 포커스 이동 (UX 향상)
+                document.getElementById("address2")?.focus();
+            },
+        });
     };
 
     const onSubmit = async (data: SignupFormData) => {
@@ -270,19 +289,36 @@ function SignUp() {
                         </h3>
                         <div className="flex gap-2">
                             <Input
-                                containerClassName="w-1/3"
                                 placeholder="우편번호"
                                 error={errors.zipCode?.message}
+                                readOnly // ✨ 직접 입력 방지
+                                onClick={handleAddressSearch} // ✨ 클릭 시 검색창 오픈
                                 registration={register("zipCode", { required: "필수" })}
                             />
-                            <Input
-                                containerClassName="w-2/3"
-                                placeholder="기본 주소"
-                                error={errors.address1?.message}
-                                registration={register("address1", { required: "필수" })}
-                            />
+                            {/* ✨ 버튼에 type="button" 필수! 안 적으면 submit됨 */}
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className="w-30 text-sm"
+                                onClick={handleAddressSearch}>
+                                주소 찾기
+                            </Button>
                         </div>
-                        <Input placeholder="상세 주소 (선택)" registration={register("address2")} />
+
+                        <Input
+                            placeholder="기본 주소"
+                            readOnly // ✨ 직접 입력 방지
+                            onClick={handleAddressSearch}
+                            error={errors.address1?.message}
+                            registration={register("address1", { required: "필수" })}
+                        />
+
+                        {/* 상세 주소에는 id="address2" 추가 (포커스용) */}
+                        <Input
+                            id="address2"
+                            placeholder="상세 주소 (선택)"
+                            registration={register("address2")}
+                        />
                     </div>
 
                     <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
