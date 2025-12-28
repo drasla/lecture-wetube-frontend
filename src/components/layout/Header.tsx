@@ -9,6 +9,7 @@ import {
     MdMenu,
     MdNotifications,
     MdSearch,
+    MdSupportAgent,
     MdVideoCall,
 } from "react-icons/md";
 import { FaRegUserCircle, FaYoutube } from "react-icons/fa";
@@ -160,6 +161,14 @@ function Header() {
                                                 onClick={() => setIsMenuOpen(false)}>
                                                 <MdAccountBox className="w-5 h-5 text-text-disabled" />
                                                 내 채널
+                                            </Link>
+                                            {/* ✨ 1:1 문의 메뉴 여기로 이동 */}
+                                            <Link
+                                                to="/inquiries"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-default hover:bg-text-default/10 transition-colors"
+                                                onClick={() => setIsMenuOpen(false)}>
+                                                <MdSupportAgent className="w-5 h-5 text-text-disabled" />
+                                                고객센터 (1:1 문의)
                                             </Link>
                                         </div>
 
