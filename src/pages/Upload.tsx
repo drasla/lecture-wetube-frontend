@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/authStore.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type KeyboardEvent } from "react";
 import { useForm } from "react-hook-form";
 import api from "../api/axios.ts";
 import type { AxiosError } from "axios";
@@ -18,6 +18,10 @@ interface UploadFormData {
 function Upload() {
     const navigate = useNavigate();
     const { user } = useAuthStore();
+
+    // ✨ 해시태그 관리 State
+    const [tags, setTags] = useState<string[]>([]);
+    const [tagInput, setTagInput] = useState("");
 
     // 로그인 안 한 유저 튕겨내기
     useEffect(() => {
@@ -63,6 +67,25 @@ function Upload() {
         }
     }, [thumbnailFile]);
 
+    // ✨ 태그 입력 핸들러
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        // 엔터나 콤마를 입력했을 때
+        if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault(); // 폼 제출 방지
+            const newTag = tagInput.trim().replace(/^#/, ""); // # 제거 및 공백 제거
+
+            if (newTag && !tags.includes(newTag)) {
+                setTags([...tags, newTag]);
+                setTagInput("");
+            }
+        }
+    };
+
+    // ✨ 태그 삭제 핸들러
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    };
+
     const onSubmit = async (data: UploadFormData) => {
         try {
             // 1. FormData 객체 생성
@@ -71,6 +94,10 @@ function Upload() {
             formData.append("description", data.description);
             formData.append("video", data.video[0]); // 실제 파일 객체 추가
             formData.append("thumbnail", data.thumbnail[0]);
+
+            // ✨ 해시태그 배열을 JSON 문자열로 변환해서 추가
+            formData.append("hashtags", JSON.stringify(tags));
+
 
             // 2. 서버 전송
             await api.post("/videos", formData, {
@@ -196,6 +223,39 @@ function Upload() {
                                     {errors.thumbnail.message}
                                 </p>
                             )}
+                        </div>
+                    </div>
+
+                    {/* ✨ 해시태그 입력 영역 (설명 textarea 아래에 추가 추천) */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-text-default">
+                            해시태그
+                        </label>
+                        <div className="flex flex-wrap gap-2 p-3 border border-divider rounded-md bg-background-default focus-within:border-secondary-main focus-within:ring-1 focus-within:ring-secondary-main">
+                            {/* 입력된 태그들 표시 */}
+                            {tags.map(tag => (
+                                <span
+                                    key={tag}
+                                    className="flex items-center gap-1 bg-secondary-main/10 text-secondary-main px-2 py-1 rounded-full text-sm">
+                                    #{tag}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeTag(tag)}
+                                        className="hover:text-error-main">
+                                        &times;
+                                    </button>
+                                </span>
+                            ))}
+
+                            {/* 태그 입력 인풋 */}
+                            <input
+                                type="text"
+                                value={tagInput}
+                                onChange={e => setTagInput(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder="태그 입력 후 엔터 (예: 브이로그)"
+                                className="flex-1 min-w-[120px] bg-transparent outline-none text-text-default placeholder:text-text-disabled"
+                            />
                         </div>
                     </div>
 
