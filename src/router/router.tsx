@@ -2,17 +2,18 @@ import { createBrowserRouter } from "react-router";
 import Layout from "../components/layout/Layout.tsx";
 import SignUp from "../pages/SignUp.tsx";
 import SignIn from "../pages/SignIn.tsx";
-import Upload from "../pages/Upload.tsx";
-import ProfileEdit from "../pages/ProfileEdit.tsx";
-import NoticeList from "../pages/notice/NoticeList.tsx";
-import NoticeDetail from "../pages/notice/NoticeDetail.tsx";
-import NoticeCreate from "../pages/notice/NoticeCreate.tsx";
-import NoticeEdit from "../pages/notice/NoticeEdit.tsx";
-import InquiryList from "../pages/inquiry/InquiryList.tsx";
-import InquiryCreate from "../pages/inquiry/InpuiryCreate.tsx";
-import InquiryDetail from "../pages/inquiry/InquiryDetail.tsx";
+import VideoUpload from "../pages/videos/VideoUpload.tsx";
+import ProfileEdit from "../pages/users/ProfileEdit.tsx";
+import NoticeList from "../pages/notices/NoticeList.tsx";
+import NoticeDetail from "../pages/notices/NoticeDetail.tsx";
+import NoticeCreate from "../pages/notices/NoticeCreate.tsx";
+import NoticeEdit from "../pages/notices/NoticeEdit.tsx";
+import InquiryList from "../pages/inquiries/InquiryList.tsx";
+import InquiryCreate from "../pages/inquiries/InpuiryCreate.tsx";
+import InquiryDetail from "../pages/inquiries/InquiryDetail.tsx";
+import Home from "../pages/Home.tsx";
+import VideoDetail from "../pages/videos/VideoDetail.tsx";
 
-const Home = () => <div className="text-2xl font-bold">홈 화면</div>;
 const router = createBrowserRouter([
     {
         path: "/",
@@ -21,15 +22,35 @@ const router = createBrowserRouter([
             { index: true, element: <Home /> },
             { path: "sign-in", element: <SignIn /> },
             { path: "sign-up", element: <SignUp /> },
-            { path: "upload", element: <Upload /> },
-            { path: "profile/edit", element: <ProfileEdit /> },
-            { path: "notices", element: <NoticeList /> },
-            { path: "notices/create", element: <NoticeCreate /> },
-            { path: "notices/:id", element: <NoticeDetail /> },
-            { path: "notices/:id/edit", element: <NoticeEdit /> },
-            { path: "inquiries", element: <InquiryList /> },
-            { path: "inquiries/new", element: <InquiryCreate /> },
-            { path: "inquiries/:id", element: <InquiryDetail /> },
+            {
+                path: "users",
+                children: [{ path: "edit", element: <ProfileEdit /> }],
+            },
+            {
+                path: "notices",
+                children: [
+                    { index: true, element: <NoticeList /> },
+                    { path: "create", element: <NoticeCreate /> },
+                    { path: ":id", element: <NoticeDetail /> },
+                    { path: ":id/edit", element: <NoticeEdit /> },
+                ],
+            },
+            {
+                path: "inquiries",
+                children: [
+                    { index: true, element: <InquiryList /> },
+                    { path: "new", element: <InquiryCreate /> },
+                    { path: ":id", element: <InquiryDetail /> },
+                ],
+            },
+
+            {
+                path: "videos/",
+                children: [
+                    { path: ":id", element: <VideoDetail /> },
+                    { path: "upload", element: <VideoUpload /> },
+                ],
+            },
         ],
     },
 ]);

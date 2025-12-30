@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { api } from "../api/axios";
-import { useAuthStore } from "../store/authStore";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
+import { api } from "../../api/axios.ts";
+import { useAuthStore } from "../../store/authStore.ts";
+import Input from "../../components/ui/Input.tsx";
+import Button from "../../components/ui/Button.tsx";
 import { MdCameraAlt } from "react-icons/md";
-import { useModalStore } from "../store/ModalStore.ts";
+import { useModalStore } from "../../store/ModalStore.ts";
 import { twMerge } from "tailwind-merge";
 
 // ✨ 성별, 생년월일 필드 추가

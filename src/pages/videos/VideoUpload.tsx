@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
-import { useAuthStore } from "../store/authStore.ts";
+import { useAuthStore } from "../../store/authStore.ts";
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { useForm } from "react-hook-form";
-import api from "../api/axios.ts";
+import api from "../../api/axios.ts";
 import type { AxiosError } from "axios";
 import { MdCloudUpload, MdImage } from "react-icons/md";
-import Input from "../components/ui/Input.tsx";
-import Button from "../components/ui/Button.tsx";
+import Input from "../../components/ui/Input.tsx";
+import Button from "../../components/ui/Button.tsx";
 
 interface UploadFormData {
     title: string;
@@ -15,7 +15,7 @@ interface UploadFormData {
     thumbnail: FileList;
 }
 
-function Upload() {
+function VideoUpload() {
     const navigate = useNavigate();
     const { user } = useAuthStore();
 
@@ -273,4 +273,4 @@ function Upload() {
     );
 }
 
-export default Upload;
+export default VideoUpload;
