@@ -4,6 +4,7 @@ import {
     MdCampaign,
     MdDarkMode,
     MdEdit,
+    MdHistory,
     MdLightMode,
     MdLogout,
     MdMenu,
@@ -118,7 +119,8 @@ function Header() {
                                 <Avatar
                                     src={user.profileImage}
                                     nickname={user.nickname}
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)} />
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                />
 
                                 {/* ✨ 드롭다운 메뉴 (조건부 렌더링) */}
                                 {isMenuOpen && (
@@ -148,6 +150,15 @@ function Header() {
                                                 onClick={() => setIsMenuOpen(false)}>
                                                 <MdAccountBox className="w-5 h-5 text-text-disabled" />
                                                 내 채널
+                                            </Link>
+                                            {/* ✨ 시청 기록 링크 추가 */}
+                                            <Link
+                                                to="/videos/history"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-default hover:bg-text-default/10 transition-colors"
+                                                onClick={() => setIsMenuOpen(false)}>
+                                                <MdHistory className="w-5 h-5 text-text-disabled" />{" "}
+                                                {/* react-icons/md 에서 import 필요 */}
+                                                시청 기록
                                             </Link>
                                             {/* ✨ 1:1 문의 메뉴 여기로 이동 */}
                                             <Link

@@ -13,6 +13,7 @@ import InquiryCreate from "../pages/inquiries/InpuiryCreate.tsx";
 import InquiryDetail from "../pages/inquiries/InquiryDetail.tsx";
 import Home from "../pages/Home.tsx";
 import VideoDetail from "../pages/videos/VideoDetail.tsx";
+import VideoHistory from "../pages/videos/VideoHistory.tsx";
 
 const router = createBrowserRouter([
     {
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
                 children: [
                     { path: ":id", element: <VideoDetail /> },
                     { path: "upload", element: <VideoUpload /> },
+                    { path: "history", element: <VideoHistory /> }, // ✨ 추가
                 ],
             },
         ],

@@ -38,3 +38,9 @@ export const toggleVideoLike = async (videoId: number) => {
     const response = await api.post<{ isLiked: boolean }>(`/videos/${videoId}/like`);
     return response.data;
 };
+
+// ✨ 시청 기록 가져오기
+export const fetchVideoHistory = async () => {
+    const response = await api.get<Video[]>("/videos/history");
+    return response.data;
+};
