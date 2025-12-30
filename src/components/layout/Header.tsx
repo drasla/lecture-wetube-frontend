@@ -18,6 +18,7 @@ import { useThemeStore } from "../../store/themeStore.ts";
 import { useState, type MouseEvent } from "react";
 import Backdrop from "../ui/Backdrop.tsx";
 import { useModalStore } from "../../store/ModalStore.ts";
+import Avatar from "../ui/Avatar.tsx";
 
 function Header() {
     const navigate = useNavigate();
@@ -114,19 +115,10 @@ function Header() {
                             {/* ✨ 프로필 메뉴 영역 (relative) */}
                             <div className="relative ml-2">
                                 {/* 아바타 버튼 */}
-                                <button
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="w-8 h-8 rounded-full bg-primary-main text-white flex items-center justify-center text-sm font-bold hover:opacity-90 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary-main/50">
-                                    {user.profileImage ? (
-                                        <img
-                                            src={user.profileImage}
-                                            alt="profile"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        user.nickname[0].toUpperCase()
-                                    )}
-                                </button>
+                                <Avatar
+                                    src={user.profileImage}
+                                    nickname={user.nickname}
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)} />
 
                                 {/* ✨ 드롭다운 메뉴 (조건부 렌더링) */}
                                 {isMenuOpen && (

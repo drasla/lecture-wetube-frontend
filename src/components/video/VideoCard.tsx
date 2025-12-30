@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
+import Avatar from "../ui/Avatar.tsx";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
@@ -26,19 +27,11 @@ export default function VideoCard({ video }: VideoCardProps) {
             {/* 2. 정보 영역 */}
             <div className="flex gap-3">
                 {/* 작성자 프로필 이미지 */}
-                <div className="shrink-0">
-                    <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-200">
-                        <img
-                            src={
-                                video.author.profileImage.startsWith("http")
-                                    ? video.author.profileImage
-                                    : `http://127.0.0.1:4000${video.author.profileImage}`
-                            }
-                            alt={video.author.nickname}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                </div>
+                <Avatar
+                    nickname={video.author.nickname}
+                    src={video.author.profileImage}
+                    size={"sm"}
+                />
 
                 {/* 텍스트 정보 */}
                 <div className="flex flex-col">

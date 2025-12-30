@@ -1,10 +1,11 @@
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { fetchComments, createComment, deleteComment, type Comment } from "../../api/comment";
 import { useAuthStore } from "../../store/authStore";
 import { useModalStore } from "../../store/ModalStore.ts";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
+import Avatar from "../ui/Avatar.tsx";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
@@ -68,51 +69,41 @@ export default function CommentList({ videoId }: CommentListProps) {
             <h3 className="text-lg font-bold text-text-default mb-4">댓글 {comments.length}개</h3>
 
             {/* 댓글 입력 폼 */}
-            <form onSubmit={handleSubmit} className="flex gap-4 mb-8">
-                <div className="w-10 h-10 rounded-full bg-background-paper border border-divider overflow-hidden flex-shrink-0">
-                    {user ? (
-                        <img
-                            src={user.profileImage || ""}
-                            alt="me"
-                            className="w-full h-full object-cover"
+            {user && (
+                <form onSubmit={handleSubmit} className="flex gap-4 mb-8">
+                    <Avatar nickname={user?.nickname || "?"} src={user?.profileImage} size={"md"} />
+                    <div className="flex-1">
+                        <input
+                            type="text"
+                            placeholder="댓글 추가..."
+                            value={content}
+                            onChange={e => setContent(e.target.value)}
+                            onFocus={() => {
+                                if (!isLoggedIn) openModal("LOGIN_REQUIRED");
+                            }}
+                            className="w-full bg-transparent border-b border-divider pb-1 text-text-default focus:border-text-default focus:outline-none transition-colors"
                         />
-                    ) : (
-                        <div className="w-full h-full bg-secondary-main/10" />
-                    )}
-                </div>
-                <div className="flex-1">
-                    <input
-                        type="text"
-                        placeholder="댓글 추가..."
-                        value={content}
-                        onChange={e => setContent(e.target.value)}
-                        onFocus={() => {
-                            if (!isLoggedIn) openModal("LOGIN_REQUIRED");
-                        }}
-                        className="w-full bg-transparent border-b border-divider pb-1 text-text-default focus:border-text-default focus:outline-none transition-colors"
-                    />
-                    <div className="flex justify-end mt-2">
-                        <button
-                            type="submit"
-                            disabled={!content.trim()}
-                            className="px-4 py-2 bg-text-default text-background-default rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90">
-                            댓글 달기
-                        </button>
+                        <div className="flex justify-end mt-2">
+                            <button
+                                type="submit"
+                                disabled={!content.trim()}
+                                className="px-4 py-2 bg-text-default text-background-default rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90">
+                                댓글 달기
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            )}
 
             {/* 댓글 리스트 */}
             <div className="space-y-6">
                 {comments.map(comment => (
                     <div key={comment.id} className="flex gap-4 group">
-                        <div className="w-10 h-10 rounded-full bg-background-paper border border-divider overflow-hidden flex-shrink-0">
-                            <img
-                                src={comment.author.profileImage || ""}
-                                alt={comment.author.nickname}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
+                        <Avatar
+                            src={comment.author.profileImage}
+                            nickname={comment.author.nickname}
+                            size="md"
+                        />
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="text-xs font-bold text-text-default">
