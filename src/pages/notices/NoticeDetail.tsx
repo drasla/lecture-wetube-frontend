@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { fetchNoticeDetail, type Notice } from "../../api/notice";
+import { deleteNotice, fetchNoticeDetail, type Notice } from "../../api/notice";
 import Button from "../../components/ui/Button";
 import { useAuthStore } from "../../store/authStore.ts";
 

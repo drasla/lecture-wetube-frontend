@@ -169,7 +169,7 @@ export default function ProfileEdit() {
             const msg = error.response?.data?.message || "프로필 수정 실패";
             alert(msg);
         }
-    };;
+    };
 
     if (!user) return null;
 

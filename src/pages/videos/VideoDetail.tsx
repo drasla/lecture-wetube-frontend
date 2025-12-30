@@ -1,19 +1,75 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { fetchVideoDetail, type Video } from "../../api/video.ts";
+import { fetchVideoDetail, toggleVideoLike, type Video } from "../../api/video.ts";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import { useAuthStore } from "../../store/authStore.ts";
+import { useModalStore } from "../../store/ModalStore.ts";
+import { MdThumbUp, MdThumbUpOffAlt } from "react-icons/md";
 
 export default function VideoDetail() {
     const { id } = useParams();
     const [video, setVideo] = useState<Video | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // ✨ 좋아요 상태 관리 (Optimistic UI를 위해 별도 state 사용)
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+
+    const { isLoggedIn } = useAuthStore();
+    const { openModal } = useModalStore();
+
+    const loadData = async (videoId: number) => {
+        try {
+            const data = await fetchVideoDetail(videoId);
+            setVideo(data);
+            // 초기 상태 설정
+            setIsLiked(data.isLiked || false);
+            setLikeCount(data.likeCount);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (id) {
-            fetchVideoDetail(Number(id)).then(setVideo).catch(console.error);
+            loadData(Number(id));
         }
     }, [id]);
 
+    // ✨ 좋아요 클릭 핸들러
+    const handleLikeClick = async () => {
+        if (!video) return;
+
+        // 1. 로그인 체크
+        if (!isLoggedIn) {
+            openModal("LOGIN_REQUIRED");
+            return;
+        }
+
+        // 2. Optimistic Update (API 응답 전에 미리 UI 변경)
+        const prevIsLiked = isLiked;
+        const prevCount = likeCount;
+
+        setIsLiked(!prevIsLiked);
+        setLikeCount(prevIsLiked ? prevCount - 1 : prevCount + 1);
+
+        try {
+            // 3. API 호출
+            const result = await toggleVideoLike(video.id);
+            // 4. 서버 결과로 확실하게 동기화 (선택 사항)
+            setIsLiked(result.isLiked);
+        } catch (error) {
+            // 실패 시 롤백
+            setIsLiked(prevIsLiked);
+            setLikeCount(prevCount);
+            console.error("좋아요 실패", error);
+        }
+    };
+
+    if (loading) return <div className="pt-20 text-center text-text-disabled">로딩 중...</div>;
     if (!video) return <div className="pt-20 text-center">로딩 중...</div>;
 
     return (
@@ -55,10 +111,23 @@ export default function VideoDetail() {
 
                         {/* 좋아요/공유 버튼 (UI만) */}
                         <div className="flex gap-2">
-                            <button className="px-4 py-2 rounded-full bg-background-default border border-divider hover:bg-background-paper text-sm font-medium transition-colors">
-                                👍 좋아요
+                            <button
+                                onClick={handleLikeClick}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                                    isLiked
+                                        ? "bg-text-default text-background-default border-transparent hover:opacity-90" // 좋아요 누름 (검은 배경)
+                                        : "bg-background-paper border-divider text-text-default hover:bg-background-default" // 안 누름 (회색 배경)
+                                }`}>
+                                {/* 상태에 따라 아이콘 변경 */}
+                                {isLiked ? (
+                                    <MdThumbUp className="w-5 h-5" />
+                                ) : (
+                                    <MdThumbUpOffAlt className="w-5 h-5" />
+                                )}
+                                <span className="text-sm font-medium">{likeCount}</span>
                             </button>
-                            <button className="px-4 py-2 rounded-full bg-background-default border border-divider hover:bg-background-paper text-sm font-medium transition-colors">
+
+                            <button className="px-4 py-2 rounded-full bg-background-paper border border-divider hover:bg-background-default text-text-default text-sm font-medium transition-colors">
                                 공유
                             </button>
                         </div>
