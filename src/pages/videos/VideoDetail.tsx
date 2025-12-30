@@ -7,6 +7,7 @@ import { useAuthStore } from "../../store/authStore.ts";
 import { useModalStore } from "../../store/ModalStore.ts";
 import { MdThumbUp, MdThumbUpOffAlt } from "react-icons/md";
 import { toggleSubscription } from "../../api/subscription.ts";
+import CommentList from "../../components/comment/CommentList.tsx";
 
 export default function VideoDetail() {
     const { id } = useParams();
@@ -187,6 +188,9 @@ export default function VideoDetail() {
                         {video.description}
                     </p>
                 </div>
+
+                {/* ✨ 댓글 컴포넌트 추가 */}
+                <CommentList videoId={Number(id)} />
             </div>
 
             {/* 오른쪽: 추천 영상 목록 (일단 빈 공간) */}
