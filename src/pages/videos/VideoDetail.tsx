@@ -6,6 +6,7 @@ import "dayjs/locale/ko";
 import { useAuthStore } from "../../store/authStore.ts";
 import { useModalStore } from "../../store/ModalStore.ts";
 import { MdThumbUp, MdThumbUpOffAlt } from "react-icons/md";
+import { toggleSubscription } from "../../api/subscription.ts";
 
 export default function VideoDetail() {
     const { id } = useParams();
@@ -16,7 +17,10 @@ export default function VideoDetail() {
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
 
-    const { isLoggedIn } = useAuthStore();
+    // ✨ 구독 상태
+    const [isSubscribed, setIsSubscribed] = useState(false);
+
+    const { user, isLoggedIn } = useAuthStore();
     const { openModal } = useModalStore();
 
     const loadData = async (videoId: number) => {
@@ -26,6 +30,7 @@ export default function VideoDetail() {
             // 초기 상태 설정
             setIsLiked(data.isLiked || false);
             setLikeCount(data.likeCount);
+            setIsSubscribed(data.isSubscribed || false);
         } catch (error) {
             console.error(error);
         } finally {
@@ -69,11 +74,37 @@ export default function VideoDetail() {
         }
     };
 
+    // ✨ 구독 핸들러
+    const handleSubscribe = async () => {
+        if (!video) return;
+        if (!isLoggedIn) {
+            openModal("LOGIN_REQUIRED");
+            return;
+        }
+        // 내 채널이면 무시
+        if (user?.id === video.author.id) {
+            alert("본인 채널은 구독할 수 없습니다.");
+            return;
+        }
+
+        // Optimistic UI
+        const prev = isSubscribed;
+        setIsSubscribed(!prev);
+
+        try {
+            const result = await toggleSubscription(video.author.id);
+            setIsSubscribed(result.isSubscribed);
+        } catch (error) {
+            setIsSubscribed(prev); // 롤백
+            console.error(error);
+        }
+    };
+
     if (loading) return <div className="pt-20 text-center text-text-disabled">로딩 중...</div>;
     if (!video) return <div className="pt-20 text-center">로딩 중...</div>;
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 p-4 max-w-[1600px] mx-auto min-h-screen">
+        <div className="flex flex-col lg:flex-row gap-6 p-4 max-w-400 mx-auto min-h-screen">
             {/* 왼쪽: 메인 영상 영역 */}
             <div className="flex-1">
                 {/* 1. 비디오 플레이어 */}
@@ -102,11 +133,24 @@ export default function VideoDetail() {
                                 <p className="font-semibold text-text-default text-sm">
                                     {video.author.nickname}
                                 </p>
-                                <p className="text-xs text-text-disabled">구독자 0명</p>
+                                <p className="text-xs text-text-disabled">
+                                    구독자 {video.subscriberCount || 0}명
+                                </p>
                             </div>
-                            <button className="ml-4 px-4 py-2 bg-text-default text-background-default rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
-                                구독
-                            </button>
+
+                            {/* ✨ 구독 버튼 */}
+                            {/* 로그인 유저가 본인이 아닐 때만 노출 */}
+                            {user?.id !== video.author.id && (
+                                <button
+                                    onClick={handleSubscribe}
+                                    className={`ml-4 px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity ${
+                                        isSubscribed
+                                            ? "bg-background-paper text-text-default border border-divider" // 구독중 (회색)
+                                            : "bg-text-default text-background-default" // 구독안함 (검정/흰색 반전)
+                                    }`}>
+                                    {isSubscribed ? "구독중" : "구독"}
+                                </button>
+                            )}
                         </div>
 
                         {/* 좋아요/공유 버튼 (UI만) */}
@@ -146,7 +190,7 @@ export default function VideoDetail() {
             </div>
 
             {/* 오른쪽: 추천 영상 목록 (일단 빈 공간) */}
-            <div className="lg:w-[350px] hidden lg:block">
+            <div className="lg:w-87.5 hidden lg:block">
                 <p className="text-text-default font-bold mb-4">다음 동영상</p>
                 <div className="space-y-3">
                     {/* 여기에 VideoCard(가로형) 컴포넌트를 나중에 추가하면 됩니다 */}

@@ -11,6 +11,8 @@ export interface Video {
     views: number;
     likeCount: number;
     isLiked?: boolean;
+    isSubscribed?: boolean; // ✨ 추가
+    subscriberCount?: number; // ✨ 추가
     author: {
         id: number;
         nickname: string;
