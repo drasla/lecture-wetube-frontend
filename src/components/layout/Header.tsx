@@ -20,6 +20,7 @@ import { useState, type MouseEvent } from "react";
 import Backdrop from "../ui/Backdrop.tsx";
 import { useModalStore } from "../../store/ModalStore.ts";
 import Avatar from "../ui/Avatar.tsx";
+import { useLayoutStore } from "../../store/layoutStore.ts";
 
 function Header() {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ function Header() {
     const toggleTheme = useThemeStore(state => state.toggleTheme);
 
     const { openModal } = useModalStore();
+    const { toggleSidebar } = useLayoutStore();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -51,7 +53,9 @@ function Header() {
             <header className="fixed top-0 left-0 right-0 h-14 bg-background-paper border-b border-divider flex items-center justify-between px-4 z-50 transition-colors duration-200">
                 {/* 1. 왼쪽: 메뉴 및 로고 */}
                 <div className="flex items-center gap-4">
-                    <button className="p-2 hover:bg-text-default/10 rounded-full transition-colors text-text-default">
+                    <button
+                        className="p-2 hover:bg-text-default/10 rounded-full transition-colors text-text-default"
+                        onClick={toggleSidebar}>
                         <MdMenu className="w-6 h-6" />
                     </button>
                     <Link to="/" className="flex items-center gap-1">
