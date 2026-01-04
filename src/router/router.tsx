@@ -14,6 +14,7 @@ import InquiryDetail from "../pages/inquiries/InquiryDetail.tsx";
 import Home from "../pages/Home.tsx";
 import VideoDetail from "../pages/videos/VideoDetail.tsx";
 import VideoHistory from "../pages/videos/VideoHistory.tsx";
+import ChannelDetail from "../pages/channels/ChannelDetail.tsx";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
             {
                 path: "users",
                 children: [{ path: "edit", element: <ProfileEdit /> }],
+            },
+            {
+                path: "channels",
+                children: [{ path: ":id", element: <ChannelDetail /> }],
             },
             {
                 path: "notices",

@@ -145,7 +145,7 @@ function Header() {
                                                 프로필 수정
                                             </Link>
                                             <Link
-                                                to={`/channel/${user.id}`}
+                                                to={`/channels/${user.id}`}
                                                 className="flex items-center gap-3 px-4 py-2 text-sm text-text-default hover:bg-text-default/10 transition-colors"
                                                 onClick={() => setIsMenuOpen(false)}>
                                                 <MdAccountBox className="w-5 h-5 text-text-disabled" />
