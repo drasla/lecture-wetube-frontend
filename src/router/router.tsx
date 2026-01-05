@@ -15,6 +15,8 @@ import Home from "../pages/Home.tsx";
 import VideoDetail from "../pages/videos/VideoDetail.tsx";
 import VideoHistory from "../pages/videos/VideoHistory.tsx";
 import ChannelDetail from "../pages/channels/ChannelDetail.tsx";
+import LikedVideos from "../pages/playlist/liked.tsx";
+import Subscriptions from "../pages/channels/Subscriptions.tsx";
 
 const router = createBrowserRouter([
     {
@@ -30,7 +32,10 @@ const router = createBrowserRouter([
             },
             {
                 path: "channels",
-                children: [{ path: ":id", element: <ChannelDetail /> }],
+                children: [
+                    { path: ":id", element: <ChannelDetail /> },
+                    { path: "subscriptions", element: <Subscriptions /> },
+                ],
             },
             {
                 path: "notices",
@@ -57,6 +62,10 @@ const router = createBrowserRouter([
                     { path: "upload", element: <VideoUpload /> },
                     { path: "history", element: <VideoHistory /> }, // ✨ 추가
                 ],
+            },
+            {
+                path: "playlist",
+                children: [{ path: "liked", element: <LikedVideos /> }],
             },
         ],
     },
