@@ -21,8 +21,15 @@ export interface Video {
 }
 
 // 전체 목록 조회
-export const fetchVideos = async () => {
-    const response = await api.get<Video[]>("/videos");
+export const fetchVideos = async (page = 1, limit = 24) => {
+    const response = await api.get<{
+        videos: Video[];
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+    }>("/videos", {
+        params: { page, limit },
+    });
     return response.data;
 };
 
