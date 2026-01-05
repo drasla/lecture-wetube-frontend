@@ -54,3 +54,11 @@ export const fetchSubscribedVideos = async () => {
     const response = await api.get<Video[]>("/videos/subscribed");
     return response.data;
 };
+
+export const searchVideos = async (query: string) => {
+    // 쿼리 파라미터로 전달 (?q=검색어)
+    const response = await api.get<Video[]>(`/videos/search`, {
+        params: { q: query },
+    });
+    return response.data;
+};

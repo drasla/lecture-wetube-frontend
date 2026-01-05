@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router"; // react-router -> react-router-dom 수정 권장
-import { fetchInquiries, type Inquiry } from "../../api/inquiry";
+import { fetchMyInquiries, type Inquiry } from "../../api/inquiry";
 import Button from "../../components/ui/Button";
 import dayjs from "dayjs";
 import Pagination from "../../components/ui/Pagination.tsx";
@@ -20,7 +20,7 @@ export default function InquiryList() {
 
     const loadData = async (page: number) => {
         try {
-            const data = await fetchInquiries(page, LIMIT);
+            const data = await fetchMyInquiries(page, LIMIT);
             setInquiries(data.inquiries);
             setTotalPage(data.totalPages);
         } catch (error) {

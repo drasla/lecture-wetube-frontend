@@ -9,8 +9,10 @@ export interface Inquiry {
     answeredAt?: string;
     createdAt: string;
     author: {
+        id: number;
         nickname: string;
-        email?: string;
+        email: string;
+        profileImage?: string;
     };
 }
 
@@ -22,8 +24,11 @@ interface InquiryListResponse {
 }
 
 // 목록 조회
-export const fetchInquiries = async (page = 1, limit = 10) => {
-    const response = await api.get<InquiryListResponse>(`/inquiries?page=${page}&limit=${limit}`);
+export const fetchMyInquiries = async (page = 1, limit = 10) => {
+    // 기존 URL "/" 그대로 사용
+    const response = await api.get<InquiryListResponse>(`/inquiries`, {
+        params: { page, limit },
+    });
     return response.data;
 };
 
@@ -57,5 +62,13 @@ export const answerInquiry = async (id: number, answer: string) => {
 
 export const deleteAnswer = async (id: number) => {
     const response = await api.delete(`/inquiries/${id}/answer`);
+    return response.data;
+};
+
+// 관리자용 목록 조회
+export const fetchAllInquiries = async (page = 1, limit = 10) => {
+    const response = await api.get<InquiryListResponse>(`/inquiries/all`, {
+        params: { page, limit },
+    });
     return response.data;
 };

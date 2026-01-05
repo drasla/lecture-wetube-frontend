@@ -16,7 +16,7 @@ import {
 import { FaRegUserCircle, FaYoutube } from "react-icons/fa";
 import { useAuthStore } from "../../store/authStore.ts";
 import { useThemeStore } from "../../store/themeStore.ts";
-import { useState, type MouseEvent } from "react";
+import { useState, type MouseEvent, type FormEvent } from "react";
 import Backdrop from "../ui/Backdrop.tsx";
 import { useModalStore } from "../../store/ModalStore.ts";
 import Avatar from "../ui/Avatar.tsx";
@@ -48,6 +48,15 @@ function Header() {
         }
     };
 
+    const [keyword, setKeyword] = useState("");
+    const handleSearch = (e: FormEvent) => {
+        e.preventDefault(); // 페이지 리로드 방지
+        if (!keyword.trim()) return;
+
+        // 검색 결과 페이지로 이동
+        navigate(`/results?q=${keyword}`);
+    };
+
     return (
         <>
             <header className="fixed top-0 left-0 right-0 h-14 bg-background-paper border-b border-divider flex items-center justify-between px-4 z-50 transition-colors duration-200">
@@ -68,18 +77,24 @@ function Header() {
                 </div>
 
                 {/* 2. 중앙: 검색창 */}
-                <div className="hidden sm:flex flex-1 max-w-[600px] items-center mx-4">
+                <form
+                    onSubmit={handleSearch}
+                    className="hidden sm:flex flex-1 max-w-[600px] items-center mx-4">
                     <div className="flex w-full">
                         <input
                             type="text"
                             placeholder="검색"
+                            value={keyword}
+                            onChange={e => setKeyword(e.target.value)}
                             className="w-full bg-background-default border border-divider rounded-l-full px-4 py-2 text-text-default placeholder:text-text-disabled focus:outline-none focus:border-secondary-main ml-8 shadow-inner"
                         />
-                        <button className="bg-background-paper border border-l-0 border-divider rounded-r-full px-5 py-2 hover:bg-text-default/5 transition-colors">
+                        <button
+                            type={"submit"}
+                            className="bg-background-paper border border-l-0 border-divider rounded-r-full px-5 py-2 hover:bg-text-default/5 transition-colors">
                             <MdSearch className="w-6 h-6 text-text-default" />
                         </button>
                     </div>
-                </div>
+                </form>
 
                 {/* 3. 오른쪽: 로그인 버튼 */}
                 {/* 3. 오른쪽: 로그인 상태에 따라 분기 처리 */}
