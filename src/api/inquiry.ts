@@ -39,8 +39,23 @@ export const createInquiry = async (data: { title: string; content: string }) =>
     return response.data;
 };
 
+export const updateInquiry = async (id: number, data: { title: string; content: string }) => {
+    const response = await api.patch<Inquiry>(`/inquiries/${id}`, data);
+    return response.data;
+};
+
+export const deleteInquiry = async (id: number) => {
+    const response = await api.delete(`/inquiries/${id}`);
+    return response.data;
+};
+
 // 답변 등록 (관리자)
 export const answerInquiry = async (id: number, answer: string) => {
     const response = await api.patch(`/inquiries/${id}/answer`, { answer });
+    return response.data;
+};
+
+export const deleteAnswer = async (id: number) => {
+    const response = await api.delete(`/inquiries/${id}/answer`);
     return response.data;
 };

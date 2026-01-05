@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router"; // react-router -> react-route
 import { fetchNotices, type Notice } from "../../api/notice";
 import dayjs from "dayjs"; // ✨ dayjs import
 import { useAuthStore } from "../../store/authStore"; // ✨ 관리자 체크용
-import Button from "../../components/ui/Button"; // ✨ 글쓰기 버튼용
+import Button from "../../components/ui/Button";
+import Pagination from "../../components/ui/Pagination.tsx"; // ✨ 글쓰기 버튼용
 
 export default function NoticeList() {
     const navigate = useNavigate();
@@ -12,19 +13,29 @@ export default function NoticeList() {
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadNotices();
-    }, []);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
+    const LIMIT = 10; // 한 페이지당 개수
 
-    const loadNotices = async () => {
+    useEffect(() => {
+        loadNotices(currentPage).then(() => {});
+    }, [currentPage]);
+
+    const loadNotices = async (page: number) => {
         try {
-            const data = await fetchNotices(1, 10); // 1페이지, 10개씩
+            const data = await fetchNotices(page, LIMIT);
             setNotices(data.notices);
+            setTotalPage(data.totalPages);
         } catch (error) {
             console.error("Failed to load notices", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+        window.scrollTo(0, 0);
     };
 
     return (
@@ -80,6 +91,15 @@ export default function NoticeList() {
                     ))
                 )}
             </div>
+
+            {/* ✨ 페이지네이션 컴포넌트 사용 */}
+            {!loading && notices.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPage={totalPage}
+                    onPageChange={handlePageChange}
+                />
+            )}
         </div>
     );
 }
