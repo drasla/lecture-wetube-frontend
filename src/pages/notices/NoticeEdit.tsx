@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
-import { fetchNoticeDetail, updateNotice } from "../../api/notice"; // ✨ API import
+import { fetchNoticeDetail, updateNotice } from "../../api/notice";
 import { useAuthStore } from "../../store/authStore";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";

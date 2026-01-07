@@ -47,11 +47,6 @@ export default function Subscriptions() {
                 <p className="text-text-disabled max-w-md mb-6">
                     즐겨찾는 채널을 구독하면 여기서 최신 동영상을 모아볼 수 있습니다.
                 </p>
-                <button
-                    onClick={() => navigate("/")}
-                    className="px-6 py-2.5 bg-background-paper border border-divider rounded-full text-text-default font-medium hover:bg-background-default transition-colors">
-                    채널 둘러보기
-                </button>
             </div>
         );
     }

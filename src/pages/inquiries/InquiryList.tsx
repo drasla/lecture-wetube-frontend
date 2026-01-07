@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router"; // react-router -> react-router-dom 수정 권장
+import { Link, useNavigate } from "react-router";
 import { fetchMyInquiries, type Inquiry } from "../../api/inquiry";
 import Button from "../../components/ui/Button";
 import dayjs from "dayjs";

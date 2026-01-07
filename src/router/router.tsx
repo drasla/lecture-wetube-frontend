@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import Layout from "../components/layout/Layout.tsx";
+import Layout from "../layouts/Layout.tsx";
 import SignUp from "../pages/SignUp.tsx";
 import SignIn from "../pages/SignIn.tsx";
 import VideoUpload from "../pages/videos/VideoUpload.tsx";
@@ -19,6 +19,10 @@ import LikedVideos from "../pages/playlist/liked.tsx";
 import Subscriptions from "../pages/channels/Subscriptions.tsx";
 import SearchResults from "../pages/videos/SearchResults.tsx";
 import InquiryEdit from "../pages/inquiries/InquiryEdit.tsx";
+import AdminLayout from "../layouts/AdminLayout.tsx";
+import UserManage from "../pages/admin/UserManage.tsx";
+import Dashboard from "../pages/admin/Dashboard.tsx";
+import VideoManage from "../pages/admin/VideoManage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -70,6 +74,15 @@ const router = createBrowserRouter([
                 path: "playlist",
                 children: [{ path: "liked", element: <LikedVideos /> }],
             },
+        ],
+    },
+    {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+            { index: true, element: <Dashboard /> },
+            { path: "users", element: <UserManage /> },
+            { path: "videos", element: <VideoManage /> },
         ],
     },
 ]);

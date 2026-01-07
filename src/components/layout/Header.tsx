@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import {
     MdAccountBox,
+    MdAdminPanelSettings,
     MdCampaign,
     MdDarkMode,
     MdEdit,
@@ -190,6 +191,17 @@ function Header() {
                                         </div>
 
                                         <div className="border-t border-divider my-1"></div>
+
+                                        {user.role === "ADMIN" && (
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setIsMenuOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-2 text-info-main hover:bg-text-default/5 text-sm font-medium"
+                                            >
+                                                <MdAdminPanelSettings className="w-6 h-6" />
+                                                관리자 페이지
+                                            </Link>
+                                        )}
 
                                         <button
                                             onClick={handleLogout}

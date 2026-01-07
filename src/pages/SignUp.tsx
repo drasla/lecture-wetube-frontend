@@ -244,7 +244,7 @@ function SignUp() {
                             개인 정보
                         </h3>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="flex justify-between gap-4">
                             <Input
                                 label="생년월일"
                                 type="date"

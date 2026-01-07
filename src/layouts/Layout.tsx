@@ -1,11 +1,11 @@
-import Header from "./Header.tsx";
+import Header from "../components/layout/Header.tsx";
 import { Outlet } from "react-router";
-import { useThemeStore } from "../../store/themeStore.ts";
+import { useThemeStore } from "../store/themeStore.ts";
 import { useEffect } from "react";
-import GlobalModal from "../ui/GlobalModal.tsx";
-import Sidebar from "./Sidebar.tsx";
+import GlobalModal from "../components/ui/GlobalModal.tsx";
+import Sidebar from "../components/layout/Sidebar.tsx";
 import { twMerge } from "tailwind-merge";
-import { useLayoutStore } from "../../store/layoutStore.ts";
+import { useLayoutStore } from "../store/layoutStore.ts";
 
 function Layout() {
     const theme = useThemeStore(state => state.theme);

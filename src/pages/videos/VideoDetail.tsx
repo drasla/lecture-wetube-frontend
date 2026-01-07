@@ -8,6 +8,7 @@ import { useModalStore } from "../../store/ModalStore.ts";
 import { MdThumbUp, MdThumbUpOffAlt } from "react-icons/md";
 import { toggleSubscription } from "../../api/subscription.ts";
 import CommentList from "../../components/comment/CommentList.tsx";
+import Avatar from "../../components/ui/Avatar.tsx";
 
 export default function VideoDetail() {
     const { id } = useParams();
@@ -120,14 +121,9 @@ export default function VideoDetail() {
                         {/* 작성자 정보 */}
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                                <img
-                                    src={
-                                        video.author.profileImage.startsWith("http")
-                                            ? video.author.profileImage
-                                            : `http://127.0.0.1:4000${video.author.profileImage}`
-                                    }
-                                    alt="profile"
-                                    className="w-full h-full object-cover"
+                                <Avatar
+                                    src={video.author.profileImage}
+                                    nickname={video.author.nickname}
                                 />
                             </div>
                             <div>
