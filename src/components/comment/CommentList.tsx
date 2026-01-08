@@ -24,12 +24,12 @@ export default function CommentList({ videoId }: CommentListProps) {
 
     // 댓글 불러오기
     useEffect(() => {
-        loadComments();
+        loadComments(videoId).then(() => {});
     }, [videoId]);
 
-    const loadComments = async () => {
+    const loadComments = async (id: number) => {
         try {
-            const data = await fetchComments(videoId);
+            const data = await fetchComments(id);
             setComments(data);
         } catch (error) {
             console.error(error);
@@ -49,6 +49,7 @@ export default function CommentList({ videoId }: CommentListProps) {
             setComments([newComment, ...comments]); // 최신 댓글을 맨 앞에 추가
             setContent(""); // 입력창 초기화
         } catch (error) {
+            console.log(error);
             alert("댓글 등록에 실패했습니다.");
         }
     };
@@ -60,9 +61,12 @@ export default function CommentList({ videoId }: CommentListProps) {
             await deleteComment(commentId);
             setComments(comments.filter(c => c.id !== commentId));
         } catch (error) {
+            console.log(error);
             alert("삭제 실패");
         }
     };
+
+    if (loading) return null;
 
     return (
         <div className="mt-6">
