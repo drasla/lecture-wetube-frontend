@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import type {Video} from "./video.ts";
+import type { Video } from "./video.ts";
 
 export interface UserData {
     id: number;
@@ -11,7 +11,7 @@ export interface UserData {
     _count: {
         videos: number;
         comments: number;
-    }
+    };
 }
 
 export interface DashboardData {
@@ -40,13 +40,16 @@ export interface AdminVideoData {
     _count: {
         likes: number;
         comments: number;
-    }
+    };
 }
 
 export const fetchAllUsers = async (page = 1) => {
-    const response = await api.get<{ users: UserData[], totalPages: number }>("/admin/users", {
-        params: { page }
-    });
+    const response = await api.get<{ users: UserData[]; totalPages: number; total: number }>(
+        "/admin/users",
+        {
+            params: { page },
+        },
+    );
     return response.data;
 };
 
@@ -56,9 +59,12 @@ export const fetchDashboardStats = async () => {
 };
 
 export const fetchAdminVideos = async (page = 1) => {
-    const response = await api.get<{ videos: AdminVideoData[], totalPages: number }>("/admin/videos", {
-        params: { page }
-    });
+    const response = await api.get<{ videos: AdminVideoData[]; totalPages: number; total: number }>(
+        "/admin/videos",
+        {
+            params: { page },
+        },
+    );
     return response.data;
 };
 

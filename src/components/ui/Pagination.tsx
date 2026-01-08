@@ -42,7 +42,7 @@ export default function Pagination({
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded-full text-text-default hover:bg-background-paper disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-full text-text-default cursor-pointer hover:bg-background-paper disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 aria-label="Previous Page">
                 <MdChevronLeft className="w-6 h-6" />
             </button>
@@ -53,7 +53,7 @@ export default function Pagination({
                     key={page}
                     onClick={() => onPageChange(page)}
                     className={twMerge(
-                        "w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all",
+                        "w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all cursor-pointer",
                         currentPage === page
                             ? "bg-text-default text-background-default font-bold scale-105" // 활성 상태
                             : "text-text-default hover:bg-background-paper", // 비활성 상태
@@ -66,7 +66,7 @@ export default function Pagination({
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPage}
-                className="p-2 rounded-full text-text-default hover:bg-background-paper disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-full text-text-default cursor-pointer hover:bg-background-paper disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 aria-label="Next Page">
                 <MdChevronRight className="w-6 h-6" />
             </button>

@@ -9,6 +9,7 @@ export default function UserManage() {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
 
     useEffect(() => {
         loadData(page);
@@ -20,6 +21,7 @@ export default function UserManage() {
             const data = await fetchAllUsers(pageNum);
             setUsers(data.users);
             setTotalPages(data.totalPages);
+            setTotal(data.total);
         } catch (error) {
             console.error(error);
         } finally {
@@ -31,7 +33,7 @@ export default function UserManage() {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
                 <h3 className="text-lg font-bold text-gray-800">회원 목록</h3>
-                <span className="text-sm text-gray-500">총 {users.length}명 (현재 페이지)</span>
+                <span className="text-sm text-gray-500">총 {total}명 (현재 페이지:{page})</span>
             </div>
 
             <div className="overflow-x-auto">

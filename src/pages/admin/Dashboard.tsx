@@ -117,7 +117,7 @@ export default function Dashboard() {
                             <div key={video.id} className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors">
                                 <div className="w-16 h-10 bg-gray-200 rounded overflow-hidden flex-shrink-0">
                                     {video.thumbnailPath ? (
-                                        <img src={`http://localhost:3000/${video.thumbnailPath}`} alt="" className="w-full h-full object-cover" />
+                                        <img src={video.thumbnailPath} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-gray-300 text-xs text-gray-500">No Img</div>
                                     )}
