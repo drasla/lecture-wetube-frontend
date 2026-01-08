@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/proxy/:path*",
-            "destination": "http://49.247.30.225:4000/:path*"
+            "destination": "http://49.247.30.225:4000/api/:path*"
         }
     ]
 }
